@@ -1,9 +1,16 @@
 package org.phi.cameratest;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -29,7 +36,8 @@ public class CameraActivity extends Activity {
 	  private boolean inPreview=false;
 	  private boolean cameraConfigured=false;
 	  private boolean optionsHidden=false; // options shown by default
-	  private int numberOfParts=3;
+	  private int numberOfParts=3; // 3 parts by default
+	  private static int radius=100;
 	  /**
 	   * Callback methods when certain events affect the SurfacePreview holder.
 	   */
@@ -64,8 +72,7 @@ public class CameraActivity extends Activity {
 	    optionsLayout = (RelativeLayout)findViewById(R.id.optionsLayout);
 	    
 	    circleView = (ImageView)findViewById(R.id.imageView1);
-	    showImage(numberOfParts);
-	    
+	    drawImage(numberOfParts);
 	    optionsLayout.setVisibility(View.VISIBLE);
 	  }
 	  /**
@@ -90,49 +97,67 @@ public class CameraActivity extends Activity {
 		  int viewId = view.getId();
 		switch (viewId) {
 		case R.id.circle3:
-			showImage(3);
+			numberOfParts = 3;
 			break;
 		case R.id.circle5:
-			showImage(5);
+			numberOfParts = 5;
 			break;
 		case R.id.circle7:
-			showImage(7);
+			numberOfParts = 7;
 			break;
 		case R.id.circle9:
-			showImage(9);
+			numberOfParts = 9;
 			break;
 		default:
 			break;
 		}
+		drawImage(numberOfParts);
 	  }
 	  /**
-	   * Shows the image <code>n</code> on the overlay view.
-	   * @param n
+	   * Draws the circle with <code>n</code> parts.
+	   * @param n The number of parts to draw on the pie.
 	   */
-	  private void showImage(int n) {
-		switch (n) {
-		case 3:
-			numberOfParts = 3;
-			circleView.setImageResource(R.drawable.circle_3);
-			break;
-
-		case 5:
-			numberOfParts = 5;
-			circleView.setImageResource(R.drawable.circle_5);
-			break;
-			
-		case 7:
-			numberOfParts = 7;
-			circleView.setImageResource(R.drawable.circle_7);
-			break;
-		case 9:
-			numberOfParts = 9;
-			circleView.setImageResource(R.drawable.circle_9);
-			break;
-		default:
-			break;
-		}
-		showHideOptions(null);
+	  private void drawImage(int n) {
+		  Display display = getWindowManager().getDefaultDisplay();
+		  int h = display.getHeight();
+		  int w = display.getWidth();
+		  Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+		  Canvas c = new Canvas(bmp);
+		  Paint paint = new Paint();
+		  paint.setColor(Color.GREEN);
+		  paint.setStrokeWidth(2);
+		  paint.setStyle(Paint.Style.STROKE);
+		  paint.setAntiAlias(true);
+		  c.drawCircle(w/2, h/2, radius, paint);
+		  Point center = new Point(w/2, h/2);
+		  Point end = new Point(w/2, (h/2)-radius);
+		  float angle = 360/n;
+		  for (int i=0;i<n;i++) {
+			  c.drawLine(center.x, center.y, end.x, end.y, paint);
+			  end = calculateNewEnd(center, end, angle);
+		  }
+		  circleView.setImageDrawable(new BitmapDrawable(bmp));
+		  showHideOptions(null);
+	  }
+	  /**
+	   * Calculate the position of the point at the end of a line after a certain rotation around an origin point.<br/>
+	   * - line starts from <code>origin</code><br/>
+	   * - line ends at <code>oldEnd</code><br/>
+	   * - rotate around <code>origin</code><br/>
+	   * - rotate of <code>angle</code> degrees
+	   * @param origin The origin of the line.
+	   * @param oldEnd The end of the line.
+	   * @param angle The angle to rotate.
+	   * @return The new end point of the line, after the rotation.
+	   */
+	  private Point calculateNewEnd(Point origin, Point oldEnd, float angle) {
+		  double cos = Math.cos(angle*Math.PI/180);
+		  double sin = Math.sin(angle*Math.PI/180);
+		  //       x' = (x    -    xc)  *  cos0  - (y  -   yc)  * sin0     +xc
+		  double newx = ((oldEnd.x-origin.x)*cos)-((oldEnd.y-origin.y)*sin)+origin.x;
+		  //       y' = (y    -    yc)  *  cos0  + (x  -   xc)  * sin0     +yc
+		  double newy = ((oldEnd.y-origin.y)*cos)+((oldEnd.x-origin.x)*sin)+origin.y;
+		  return new Point((int)newx, (int)newy);
 	  }
 	  
 	  @Override
