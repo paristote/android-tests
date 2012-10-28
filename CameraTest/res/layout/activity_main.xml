@@ -1,0 +1,80 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <SurfaceView
+        android:id="@+id/surfaceView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:onClick="showHideOptions" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
+
+    <RelativeLayout
+        android:id="@+id/optionsLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:visibility="invisible">
+
+        <ImageButton
+            android:id="@+id/circle3"
+            android:contentDescription="3"
+            android:src="@drawable/icon_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="10dp"
+            android:onClick="changeImage"/>
+        
+        <ImageButton
+            android:id="@+id/circle5"
+            android:contentDescription="5"
+            android:src="@drawable/icon_5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/circle3"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
+            android:onClick="changeImage"/>
+        
+        <ImageButton
+            android:id="@+id/circle7"
+            android:contentDescription="7"
+            android:src="@drawable/icon_7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/circle5"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
+            android:onClick="changeImage"/>
+        
+        <ImageButton
+            android:id="@+id/circle9"
+            android:contentDescription="9"
+            android:src="@drawable/icon_9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/circle7"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
+            android:onClick="changeImage"/>
+        
+    </RelativeLayout>
+
+</RelativeLayout>
